@@ -1,19 +1,121 @@
 import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-import { ProfilePic } from "../utils/getSvgs";
+import { useMutation } from "@tanstack/react-query";
 
-const navigation = [
-  { name: "Home", href: "#", current: true },
-  { name: "How it Works", href: "#", current: false },
-  { name: "Find Komrades", href: "#", current: false },
-];
+import { ProfilePic } from "../utils/svgs";
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
+import logo from "../assets/images/logo.png";
+import { logout } from "../utils/api";
+import { Link } from "react-router-dom";
+import { useAtom } from "jotai";
+import { isAnonymousUserAtom, isRegisteredUserAtom } from "../store/atomStore";
 
 export default function Navbar() {
+  const [isAnonymousUser, setIsAnonymousUser] = useAtom(isAnonymousUserAtom);
+  const [, setIsRegisteredUser] = useAtom(isRegisteredUserAtom);
+
+  console.log("isAnonymousUser ? > ", isAnonymousUser);
+  // const token = localStorage.getItem("Token");
+
+  const navigation = [
+    { name: "Home", href: "/", current: true },
+    { name: "How it Works", href: "/how-it-works", current: false },
+    { name: "Find Komrades", href: "/komrades", current: false },
+  ];
+
+  function classNames(...classes) {
+    return classes.filter(Boolean).join(" ");
+  }
+
+  const signOut = (e) => {
+    e.preventDefault();
+    mutation.mutate();
+  };
+
+  const mutation = useMutation({
+    mutationFn: logout,
+    onSuccess: () => {
+      setIsRegisteredUser(false);
+      setIsAnonymousUser(true);
+    },
+  });
+
+  const authLinks = (
+    <>
+      <Menu.Item>
+        {({ active }) => (
+          <Link
+            to="/profile"
+            className={classNames(
+              active ? "bg-gray-100" : "",
+              "block px-4 py-2 text-sm text-gray-700"
+            )}
+          >
+            Your Profile
+          </Link>
+        )}
+      </Menu.Item>
+      <Menu.Item>
+        {({ active }) => (
+          <a
+            href=".."
+            className={classNames(
+              active ? "bg-gray-100" : "",
+              "block px-4 py-2 text-sm text-gray-700"
+            )}
+          >
+            Settings
+          </a>
+        )}
+      </Menu.Item>
+      <Menu.Item>
+        {({ active }) => (
+          <button
+            onClick={signOut}
+            className={classNames(
+              active ? "bg-gray-100" : "",
+              "block px-4 py-2 text-sm text-gray-700"
+            )}
+          >
+            Sign out
+          </button>
+        )}
+      </Menu.Item>
+    </>
+  );
+
+  const guestLinks = (
+    <>
+      <Menu.Item>
+        {({ active }) => (
+          <Link
+            to="/auth"
+            className={classNames(
+              active ? "bg-gray-100" : "",
+              "block px-4 py-2 text-sm text-gray-700"
+            )}
+          >
+            Login
+          </Link>
+        )}
+      </Menu.Item>
+      <Menu.Item>
+        {({ active }) => (
+          <Link
+            to="/auth"
+            className={classNames(
+              active ? "bg-gray-100" : "",
+              "block px-4 py-2 text-sm text-gray-700"
+            )}
+          >
+            Signup
+          </Link>
+        )}
+      </Menu.Item>
+    </>
+  );
+
   return (
     <Disclosure as="nav" className="bg-slate-900 fixed w-screen z-10">
       {({ open }) => (
@@ -38,13 +140,8 @@ export default function Navbar() {
                 {/* LEFT NAV LINKS */}
                 <div className="flex flex-shrink-0 items-center justify-center">
                   <img
-                    className="block h-8 w-auto lg:hidden"
-                    src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-                    alt="Your Company"
-                  />
-                  <img
-                    className="hidden h-8 w-auto lg:block"
-                    src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
+                    className="block h-8 w-auto"
+                    src={logo}
                     alt="Your Company"
                   />
                   <h1 className="ml-2 text-white font-semibold">
@@ -55,9 +152,9 @@ export default function Navbar() {
                 <div className="hidden sm:ml-6 sm:block">
                   <div className="flex space-x-4">
                     {navigation.map((item) => (
-                      <a
+                      <Link
                         key={item.name}
-                        href={item.href}
+                        to={item.href}
                         className={classNames(
                           item.current
                             ? "bg-gray-900 text-white"
@@ -67,7 +164,7 @@ export default function Navbar() {
                         aria-current={item.current ? "page" : undefined}
                       >
                         {item.name}
-                      </a>
+                      </Link>
                     ))}
                   </div>
                 </div>
@@ -91,45 +188,7 @@ export default function Navbar() {
                       leaveTo="transform opacity-0 scale-95"
                     >
                       <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                        <Menu.Item>
-                          {({ active }) => (
-                            <a
-                              href="..."
-                              className={classNames(
-                                active ? "bg-gray-100" : "",
-                                "block px-4 py-2 text-sm text-gray-700"
-                              )}
-                            >
-                              Your Profile
-                            </a>
-                          )}
-                        </Menu.Item>
-                        <Menu.Item>
-                          {({ active }) => (
-                            <a
-                              href=".."
-                              className={classNames(
-                                active ? "bg-gray-100" : "",
-                                "block px-4 py-2 text-sm text-gray-700"
-                              )}
-                            >
-                              Settings
-                            </a>
-                          )}
-                        </Menu.Item>
-                        <Menu.Item>
-                          {({ active }) => (
-                            <a
-                              href=".."
-                              className={classNames(
-                                active ? "bg-gray-100" : "",
-                                "block px-4 py-2 text-sm text-gray-700"
-                              )}
-                            >
-                              Sign out
-                            </a>
-                          )}
-                        </Menu.Item>
+                        {isAnonymousUser ? guestLinks : authLinks}
                       </Menu.Items>
                     </Transition>
                   </Menu>
@@ -138,6 +197,7 @@ export default function Navbar() {
               </div>
             </div>
           </div>
+
           <Disclosure.Panel className="sm:hidden">
             <div className="space-y-1 px-2 pt-2 pb-3">
               {navigation.map((item) => (

@@ -47,6 +47,7 @@ THIRD_PARTY_APPS =[
     'dj_rest_auth',
     'allauth',
     'allauth.account',
+    'corsheaders',
 ]
 
 LOCAL_APPS=[
@@ -67,6 +68,7 @@ AUTH_USER_MODEL = 'komrade.Account'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -176,3 +178,12 @@ REST_FRAMEWORK = {
 }
 
 CSRF_COOKIE_NAME = "csrftoken"
+
+CORS_ORIGIN_ALLOW_ALL = False
+
+CORS_ORIGIN_WHITELIST = (
+    'http://localhost:8000',
+    "http://127.0.0.1:3000",
+    "http://localhost:3000",
+    'https://localhost:3000',
+)

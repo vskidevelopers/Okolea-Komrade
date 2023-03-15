@@ -1,6 +1,6 @@
 import React from "react";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
-import { ProjectComplete } from "../utils/getSvgs";
+import { ProjectComplete } from "../utils/svgs";
 
 function LandingPage() {
   return (
